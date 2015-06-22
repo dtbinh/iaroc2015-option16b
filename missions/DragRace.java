@@ -19,9 +19,9 @@ public class DragRace {
 			RConsole.println("West: "+westTacho+"\tEast: "+eastTacho);
 			Delay.msDelay(50);
 			if(false) {
-				break;
+			break;
 			}
-		}
+	}
 		
 		Delay.msDelay(1000);
 		
