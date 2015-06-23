@@ -9,22 +9,28 @@ public class DragRace {
 		texBot.motorEast.resetTachoCount();
 		texBot.motorNorth.resetTachoCount();
 		texBot.motorSouth.resetTachoCount();
-		texBot.moveNorth(); 
 		int eastTacho;
 		int westTacho;
-		RConsole.open();
+		int northTacho;
+		int southTacho;
+		int offset;
+		//RConsole.open();
+		texBot.setAllPower(50);
+		texBot.moveEast();
 		while (true) {
-			eastTacho = texBot.motorEast.getTachoCount();
-			westTacho = texBot.motorWest.getTachoCount();
-			RConsole.println("West: "+westTacho+"\tEast: "+eastTacho);
+			northTacho = texBot.motorNorth.getTachoCount();
+			southTacho = -1*texBot.motorSouth.getTachoCount();
+			offset = northTacho - southTacho;
+			//RConsole.println(/*"West: "+westTacho+"\tEast: "+eastTacho+*/"\tNorth: "+northTacho+"\tSouth: "+southTacho+"\tOffset: "+offset);
 			Delay.msDelay(50);
-			if(false) {
-			break;
+			
+			if(texBot.getDistanceEast() > 600) {
+				break;
 			}
-	}
-		
+		 }
+		texBot.moveWest();
 		Delay.msDelay(1000);
-		
+		texBot.stop();
 		
 		Delay.msDelay(2000);
 		

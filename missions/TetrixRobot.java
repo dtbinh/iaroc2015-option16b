@@ -1,19 +1,16 @@
 package missions;
-import ch.aplu.nxt.SensorPort;
-import lejos.nxt.I2CPort;
+import lejos.nxt.SensorPort;
 import lejos.nxt.addon.tetrix.TetrixControllerFactory;
 import lejos.nxt.addon.tetrix.TetrixEncoderMotor;
 import lejos.nxt.addon.tetrix.TetrixMotorController;
-import lejos.nxt.comm.RConsole;
-import lejos.util.Delay;
 import ch.aplu.nxt.NxtRobot;
 import ch.aplu.nxt.SuperProSensor;
 
 public class TetrixRobot {		
 	NxtRobot robot = new NxtRobot();
-	SuperProSensor superPro1 = new SuperProSensor(SensorPort.S1);
-	TetrixControllerFactory factory1 = new TetrixControllerFactory((I2CPort) SensorPort.S2); // front left controller
-	TetrixControllerFactory factory2 = new TetrixControllerFactory((I2CPort) SensorPort.S3); // back right controller 
+	SuperProSensor superPro1 = new SuperProSensor(ch.aplu.nxt.SensorPort.S1);
+	TetrixControllerFactory factory1 = new TetrixControllerFactory(SensorPort.S2); // front left controller
+	TetrixControllerFactory factory2 = new TetrixControllerFactory(SensorPort.S3); // back right controller 
 	TetrixMotorController controller1 = factory1.newMotorController(); // front left controller 
 	TetrixMotorController controller2 = factory2.newMotorController(); // back right controller
 	TetrixEncoderMotor motorNorth = controller1.getEncoderMotor(TetrixMotorController.MOTOR_1);
@@ -30,21 +27,28 @@ public class TetrixRobot {
 	}
 	public double getDistanceEast() {
 		superPro1.readAnalog(values);
-		return largeCM(values[2]);		
+		return values[3];
+		//return largeCM(values[3]);		
 	}
 	public double getDistanceWest() {
 		return 0;
 	}
-	public void setNorthMotor(int power) {
+	public void setAllPower(int power) {
+		setNorthPower(power);
+		setSouthPower(power);
+		setWestPower(power);
+		setEastPower(power);
+	}
+	public void setNorthPower(int power) {
 		motorNorth.setPower(power);
 	}
-	public void setSouthMotor(int power) {
+	public void setSouthPower(int power) {
 		motorSouth.setPower(power);
 	}
-	public void setWestMotor(int power) {
+	public void setWestPower(int power) {
 		motorWest.setPower(power);
 	}
-	public void setEastMotor(int power) {
+	public void setEastPower(int power) {
 		motorEast.setPower(power);
 	}
 	public void stop() {
@@ -54,12 +58,26 @@ public class TetrixRobot {
 		motorEast.stop();
 	}
 	public void moveNorth () {
-		motorWest.forward();
+		motorWest.backward();
 		motorEast.forward();
 	}
 	public void moveSouth () {
-		motorWest.backward();
+		motorWest.forward();
 		motorEast.backward();
+	}
+	public void moveEast() {
+		motorNorth.backward();
+		motorSouth.forward();
+	}
+	public void moveWest() {
+		motorNorth.forward();
+		motorSouth.backward();
+	}
+	public void spin(){
+		motorEast.forward();
+		motorWest.forward();
+		motorSouth.forward();
+		motorNorth.forward();
 	}
 	
 

@@ -18,7 +18,7 @@ public class TestSuperpro {
 		while(true)
 		{
 			sensor.readAnalog(values);
-			RConsole.println("Large:\t" + values[1] + "\tMedium:\t" + values[2]);
+			RConsole.println("West Large:\t" + values[1] + "\tSouth Medium:\t" + values[2] + "\tEast Large:\t" + values[3]);
 			Delay.msDelay(50);
 		}
 	}
