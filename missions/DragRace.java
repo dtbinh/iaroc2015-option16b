@@ -11,24 +11,44 @@ public class DragRace {
 		texBot.motorSouth.resetTachoCount();
 		int eastTacho;
 		int westTacho;
-		int northTacho;
-		int southTacho;
+		//int northTacho;
+		//int southTacho;
 		int offset;
-		//RConsole.open();
+		int poweroffset = 0;
+		RConsole.open();
 		texBot.setAllPower(50);
-		texBot.moveEast();
+		texBot.moveNorth();
 		while (true) {
-			northTacho = texBot.motorNorth.getTachoCount();
-			southTacho = -1*texBot.motorSouth.getTachoCount();
-			offset = northTacho - southTacho;
-			//RConsole.println(/*"West: "+westTacho+"\tEast: "+eastTacho+*/"\tNorth: "+northTacho+"\tSouth: "+southTacho+"\tOffset: "+offset);
-			Delay.msDelay(50);
+			//northTacho = texBot.motorNorth.getTachoCount();
+			//southTacho = texBot.motorSouth.getTachoCount();
+			eastTacho = texBot.motorEast.getTachoCount();
+			westTacho = texBot.motorWest.getTachoCount();
+			offset = eastTacho+westTacho; //west motor is moving backwards so the encoder will give negative values
+			if(offset>1) {
+				texBot.setWestPower(55);
+				texBot.setEastPower(45);
+			} else if (offset<-1) {
+				texBot.setWestPower(45);
+				texBot.setEastPower(55);
+			}
+			if (texBot.binaryWest()) {
+				texBot.motorNorth.backward();
+				texBot.motorSouth.forward();
+			} else if (texBot.binaryEast()) {
+				texBot.motorNorth.forward();
+				texBot.motorSouth.backward();
+			} else {
+				texBot.motorNorth.stop();
+				texBot.motorSouth.stop();
+			}
+
+			RConsole.println("West: "+westTacho+"\tEast: "+eastTacho+"\tOffset: "+offset+"\tPoweroffset: \t" + poweroffset);
+			Delay.msDelay(10);
 			
-			if(texBot.getDistanceEast() > 600) {
+			if(texBot.getDistanceNorth() > 800) {
 				break;
 			}
 		 }
-		texBot.moveWest();
 		Delay.msDelay(1000);
 		texBot.stop();
 		

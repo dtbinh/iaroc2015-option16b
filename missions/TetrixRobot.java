@@ -18,12 +18,22 @@ public class TetrixRobot {
 	TetrixEncoderMotor motorWest = controller1.getEncoderMotor(TetrixMotorController.MOTOR_2); //forward left motor
 	TetrixEncoderMotor motorEast = controller2.getEncoderMotor(TetrixMotorController.MOTOR_2); // forward right motor
 	int[] values = new int[4];
+	int[] binaries = new int[8];
 	
 	public TetrixRobot(){
 		robot.addPart(superPro1);
 	}
+	public void updateSensors() {
+		superPro1.readAnalog(values);
+		superPro1.readDigital(binaries);
+	}
 	private double largeCM(int input) {
 		return -0.000001d*Math.pow(input, 3)  + 0.0018d*Math.pow(input,2) - 1.0408d*input + 239.13d;
+	}
+	public double getDistanceNorth() {
+		//superPro1.readDigital(binaries);
+		return 0;
+		//return binaries[3]==1?700:0; 
 	}
 	public double getDistanceEast() {
 		superPro1.readAnalog(values);
@@ -32,6 +42,14 @@ public class TetrixRobot {
 	}
 	public double getDistanceWest() {
 		return 0;
+	}
+	public boolean binaryWest() {
+		superPro1.readDigital(binaries);
+		return binaries[0]==0;
+	}
+	public boolean binaryEast() {
+		superPro1.readDigital(binaries);
+		return binaries[3]==0;
 	}
 	public void setAllPower(int power) {
 		setNorthPower(power);
