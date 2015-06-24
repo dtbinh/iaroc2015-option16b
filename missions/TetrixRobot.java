@@ -31,17 +31,44 @@ public class TetrixRobot {
 		return -0.000001d*Math.pow(input, 3)  + 0.0018d*Math.pow(input,2) - 1.0408d*input + 239.13d;
 	}
 	public double getDistanceNorth() {
-		//superPro1.readDigital(binaries);
-		return 0;
-		//return binaries[3]==1?700:0; 
+		if(binaryNorth()){
+			return 10;
+		} else {
+			superPro1.readAnalog(values);
+			return largeCM(values[3]);
+		}
 	}
 	public double getDistanceEast() {
-		superPro1.readAnalog(values);
-		return values[3];
-		//return largeCM(values[3]);		
+		if(binaryWest()) {
+			return 10;
+		} else {
+			superPro1.readAnalog(values);
+			return largeCM(values[2]);
+		}
 	}
 	public double getDistanceWest() {
-		return 0;
+		if(binaryWest()) {
+			return 10;
+		} else {
+			superPro1.readAnalog(values);
+			return largeCM(values[1]);
+		}
+	}
+	public double getDistanceSouth() {
+		if(binaryWest()) {
+			return 10;
+		} else {
+			superPro1.readAnalog(values);
+			return 51;//TODO
+		}
+	}
+	public boolean binaryNorth() {
+		superPro1.readDigital(binaries);
+		return binaries[2]==0;
+	}
+	public boolean binaryNorthWest() {
+		superPro1.readDigital(binaries);
+		return binaries[4]==0;
 	}
 	public boolean binaryWest() {
 		superPro1.readDigital(binaries);
@@ -50,6 +77,10 @@ public class TetrixRobot {
 	public boolean binaryEast() {
 		superPro1.readDigital(binaries);
 		return binaries[3]==0;
+	}
+	public boolean binarySouth() {
+		superPro1.readDigital(binaries);
+		return binaries[1]==0;
 	}
 	public void setAllPower(int power) {
 		setNorthPower(power);
@@ -91,11 +122,23 @@ public class TetrixRobot {
 		motorNorth.forward();
 		motorSouth.backward();
 	}
-	public void spin(){
+	public void spinLeft(){
 		motorEast.forward();
 		motorWest.forward();
 		motorSouth.forward();
 		motorNorth.forward();
+	}
+	public void spinRight(){
+		motorEast.backward();
+		motorWest.backward();
+		motorSouth.backward();
+		motorNorth.backward();
+	}
+	public void turnLeft90() {
+		motorNorth.rotate(520, true);
+		motorEast.rotate(520, true);
+		motorWest.rotate(52, true);
+		motorSouth.rotate(520, false);
 	}
 	
 
