@@ -10,10 +10,9 @@ public class Maze {
 			y=0;
 	static Cell currentCell;
 	public static void main(String[] args) {
-		
 		currentCell = new Cell(x,y);
 		updateCurrentCell();
-		move(Directions.NORTH)
+		move(Directions.NORTH);
 	}
 	public static void updateCurrentCell() {
 		currentCell.north = texBot.getDistanceNorth()<50?Cell.WallState.WALL:Cell.WallState.NONE;

@@ -39,11 +39,11 @@ public class TetrixRobot {
 		}
 	}
 	public double getDistanceEast() {
-		if(binaryWest()) {
+		if(binaryEast()) {
 			return 10;
 		} else {
 			superPro1.readAnalog(values);
-			return largeCM(values[2]);
+			return largeCM(values[0]);
 		}
 	}
 	public double getDistanceWest() {
@@ -55,7 +55,7 @@ public class TetrixRobot {
 		}
 	}
 	public double getDistanceSouth() {
-		if(binaryWest()) {
+		if(binarySouth()) {
 			return 10;
 		} else {
 			superPro1.readAnalog(values);
