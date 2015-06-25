@@ -30,57 +30,111 @@ public class TetrixRobot {
 	private double largeCM(int input) {
 		return -0.000001d*Math.pow(input, 3)  + 0.0018d*Math.pow(input,2) - 1.0408d*input + 239.13d;
 	}
-	public double getDistanceNorth() {
-		if(binaryNorth()){
+	public double getDistanceNorthLeft() {
+		if(binaryNorthLeft()){
+			return 10;
+		} else {
+			superPro1.readAnalog(values);
+			return largeCM(values[3]); // reads value of front sensor and return CM value
+		}
+	}
+	public double getDistanceNorthRight() {
+		if(binaryNorthRight()) {
 			return 10;
 		} else {
 			superPro1.readAnalog(values);
 			return largeCM(values[3]);
 		}
 	}
-	public double getDistanceEast() {
-		if(binaryEast()) {
+			
+			
+	public double getDistanceEastLeft() {
+		if(binaryEastLeft()) {
 			return 10;
 		} else {
 			superPro1.readAnalog(values);
-			return largeCM(values[0]);
+			return largeCM(values[2]);
 		}
 	}
-	public double getDistanceWest() {
-		if(binaryWest()) {
+		
+	public double getDistanceEastRight() {
+			if(binaryEastRight()) {
+				return 10;
+			} else {
+				superPro1.readAnalog(values);
+				return largeCM(values[2]);
+			}
+	}
+	
+	public double getDistanceWestLeft() {
+		if(binaryWestLeft()) {
 			return 10;
 		} else {
 			superPro1.readAnalog(values);
 			return largeCM(values[1]);
 		}
 	}
-	public double getDistanceSouth() {
-		if(binarySouth()) {
+	
+	public double getDistanceWestRight() {
+		if(binaryWestRight()) {
 			return 10;
 		} else {
 			superPro1.readAnalog(values);
-			return 51;//TODO
+			return largeCM(values[1]);
 		}
 	}
-	public boolean binaryNorth() {
-		superPro1.readDigital(binaries);
-		return binaries[2]==0;
+	
+	public double getDistanceSouthLeft() {
+		if(binarySouthLeft()) {
+			return 10;
+		} else {
+			superPro1.readAnalog(values);
+			return largeCM(values[0]);
+			//return 51;//TODO
+		}
 	}
-	public boolean binaryNorthWest() {
+	
+	public double getDistanceSouthRight() {
+		if(binarySouthRight()) {
+			return 10;
+		} else {
+			superPro1.readAnalog(values);
+			return largeCM(values[0]);
+			//return 51;//TODO
+		}
+	}
+	
+	public boolean binaryNorthLeft() {
+		superPro1.readDigital(binaries);
+		return binaries[2]==0; //second input B2 on superpro  1 MEANS SOMETHINGS THERE. SO RETURNS TRUE IF NOTHINGS THERE 
+	}
+	public boolean binaryNorthRight(){
+		superPro1.readDigital(binaries);
+		return binaries[5]==0; //second input B2 on superpro 
+	}
+	public boolean binaryWestRight() {
 		superPro1.readDigital(binaries);
 		return binaries[4]==0;
 	}
-	public boolean binaryWest() {
+	public boolean binaryWestLeft() {
 		superPro1.readDigital(binaries);
 		return binaries[0]==0;
 	}
-	public boolean binaryEast() {
+	public boolean binaryEastLeft() {
 		superPro1.readDigital(binaries);
 		return binaries[3]==0;
 	}
-	public boolean binarySouth() {
+	public boolean binaryEastRight() {
+		superPro1.readDigital(binaries);
+		return binaries[6]==0;
+	}
+	public boolean binarySouthLeft() {
 		superPro1.readDigital(binaries);
 		return binaries[1]==0;
+	}
+	public boolean binarySouthRight() {
+		superPro1.readDigital(binaries);
+		return binaries[7]==0;
 	}
 	public void setAllPower(int power) {
 		setNorthPower(power);

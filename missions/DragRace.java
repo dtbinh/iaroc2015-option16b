@@ -4,17 +4,17 @@ public class DragRace {
 	static TetrixRobot texBot = new TetrixRobot();
 	public static void goForward() {
 		texBot.setAllPower(100);
-		texBot.moveNorth();
-		while (texBot.getDistanceNorth() > 50) {
-			if (texBot.binaryNorthWest()) {
+		texBot.moveNorth(); // will not stop north motors unless code explicitly tells them to
+		while (texBot.getDistanceNorthLeft() > 50) { //while distance is greater than 50cm
+			if (texBot.binaryWestRight() || texBot.binaryWestLeft()) { 
 				texBot.moveEast();
 				texBot.setEastPower(35);
-				Delay.msDelay(300);
-			} else if (texBot.binaryEast()) {
+				Delay.msDelay(400);
+			} else if (texBot.binaryEastLeft() || texBot.binaryEastRight()) {
 				texBot.moveWest();
 				texBot.setWestPower(35);
-				Delay.msDelay(300);
-			} else {
+				Delay.msDelay(400);
+			} else { // if both binary sensors don't sense anything north and south motors do nothing
 				texBot.motorNorth.stop();
 				texBot.motorSouth.stop();
 			}

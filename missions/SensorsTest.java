@@ -8,7 +8,7 @@ public class SensorsTest {
 		TetrixRobot texBot = new TetrixRobot();
 		RConsole.open();
 		while (true) {
-			RConsole.println("N:\t"+(int)texBot.getDistanceNorth()+"\tW:\t"+(int)texBot.getDistanceWest()+"\tE:\t"+(int)texBot.getDistanceEast()+"\tS:\t"+(int)texBot.getDistanceSouth());
+			RConsole.println("North left: " + texBot.binaryNorthLeft() + "\tNorth right:" + texBot.binaryNorthRight() + "\tWest left:" + texBot.binaryWestLeft() + "\tWest right:" + texBot.binaryWestRight() + "\tEast left:" + texBot.binaryEastLeft() + "\tEast right:" + texBot.binaryEastRight() + "\tSouth left:" + texBot.binarySouthLeft() + "\tSouth right" + texBot.binarySouthRight());
 			Delay.msDelay(100);
 		}
 	}
