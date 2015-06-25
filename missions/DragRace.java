@@ -23,15 +23,37 @@ public class DragRace {
 		}
 		texBot.stop();
 	}
+	public static void goBackwards(){
+		texBot.setAllPower(100);
+		texBot.moveSouth();
+		while(texBot.getDistanceSouthLeft()>50){
+			if (texBot.binaryWestRight() || texBot.binaryWestLeft()) { 
+				texBot.moveEast();
+				texBot.setEastPower(35);
+				Delay.msDelay(400);
+			} else if (texBot.binaryEastLeft() || texBot.binaryEastRight()) {
+				texBot.moveWest();
+				texBot.setWestPower(35);
+				Delay.msDelay(400);
+			} else { // if both binary sensors don't sense anything north and south motors do nothing
+				texBot.motorNorth.stop();
+				texBot.motorSouth.stop();
+			}
+			texBot.setAllPower(100);
+			Delay.msDelay(5);
+		}
+		texBot.stop();
+	}
 	public static void main(String[] args) {	
 		goForward();
-		texBot.setAllPower(80);
+		goBackwards();
+		/*texBot.setAllPower(80);
 		texBot.moveSouth();
 		Delay.msDelay(500);
 		texBot.spinLeft();
 		Delay.msDelay(1200);
 		texBot.stop();
-		goForward();
+		goForward();*/
 	}
 	
 
