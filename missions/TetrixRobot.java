@@ -5,9 +5,10 @@ import lejos.nxt.addon.tetrix.TetrixEncoderMotor;
 import lejos.nxt.addon.tetrix.TetrixMotorController;
 import ch.aplu.nxt.NxtRobot;
 import ch.aplu.nxt.SuperProSensor;
-
+import lejos.nxt.addon.IRSeekerV2;
 public class TetrixRobot {		
 	NxtRobot robot = new NxtRobot();
+	IRSeekerV2 seeker = new IRSeekerV2(SensorPort.S4, IRSeekerV2.Mode.DC);
 	SuperProSensor superPro1 = new SuperProSensor(ch.aplu.nxt.SensorPort.S1);
 	TetrixControllerFactory factory1 = new TetrixControllerFactory(SensorPort.S2); // front left controller
 	TetrixControllerFactory factory2 = new TetrixControllerFactory(SensorPort.S3); // back right controller 
@@ -22,6 +23,8 @@ public class TetrixRobot {
 	
 	public TetrixRobot(){
 		robot.addPart(superPro1);
+		//robot.addPart(seeker);
+
 	}
 	public void updateSensors() {
 		superPro1.readAnalog(values);
@@ -194,6 +197,13 @@ public class TetrixRobot {
 		motorWest.rotate(52, true);
 		motorSouth.rotate(520, false);
 	}
+	public int getSeekerDirection(){
+		return seeker.getDirection();
+	}
 	
-
+	public String seekerConversion(int direction)
+	{
+		return null;
+	}
+	
 }
