@@ -2,6 +2,8 @@ package missions;
 
 import java.util.Queue;
 
+import lejos.nxt.comm.RConsole;
+
 //import lejos.nxt.comm.RConsole;
 import lejos.util.Delay;
 
@@ -12,18 +14,21 @@ public class Maze {
 	static short x=0,
 			y=0;
 	static Cell currentCell;
+	static Directions vertAllign, horizAllign;
+	static int offset = 45;
 	public static void main(String[] args) {
 		//RConsole.open();
 		texBot.setAllPower(40);
+		scoutingRun();
+	}
+	public static void scoutingRun() {
 		while(true) {
 			currentCell = new Cell(x,y);
 			updateCurrentCell();
 			//RConsole.println("X:\t"+currentCell.x+"\tY:\t"+currentCell.y+"\tN:\t"+currentCell.north.name()+"\tW:\t"+currentCell.west.name()+"\tE:\t"+currentCell.east.name()+"\tS:\t"+currentCell.west.name());
 			allign();
-			Delay.msDelay(500);
 			//RConsole.println("Facing:\t"+currDirection.name());
 			decideMove();
-			Delay.msDelay(500);
 		}
 	}
 	public static void decideMove() {
@@ -64,21 +69,28 @@ public class Maze {
 		case EAST:
 			if(currentCell.south==Cell.WallState.NONE) {
 				move(Directions.SOUTH);//RConsole.println("Decided to move SOUTH");
-			} else if (currentCell.west==Cell.WallState.NONE){
-				move(Directions.WEST);//RConsole.println("Decided to move WEST");
+			} else if (currentCell.east==Cell.WallState.NONE){
+				move(Directions.EAST);//RConsole.println("Decided to move EAST");
 			} else if (currentCell.north==Cell.WallState.NONE){
 				move(Directions.NORTH);//RConsole.println("Decided to move NORTH");
-			} else if (currentCell.east==Cell.WallState.NONE) {
-				move(Directions.EAST);//RConsole.println("Decided to move EAST");
+			} else if (currentCell.west==Cell.WallState.NONE) {
+				move(Directions.WEST);//RConsole.println("Decided to move WEST");
 			}
 			break;
 		}
 	}
 	public static void updateCurrentCell() {
-		currentCell.north = texBot.getDistanceNorthLeft()<50?Cell.WallState.WALL:Cell.WallState.NONE;
-		currentCell.west = texBot.getDistanceWestLeft()<50?Cell.WallState.WALL:Cell.WallState.NONE;
-		currentCell.east = texBot.getDistanceEastLeft()<50?Cell.WallState.WALL:Cell.WallState.NONE;
-		currentCell.south = texBot.getDistanceSouthLeft()<50?Cell.WallState.WALL:Cell.WallState.NONE;
+		int north,west,east,south;
+		north = (int) texBot.getDistanceNorthLeft();
+		west = (int) texBot.getDistanceWestLeft();
+		east = (int) texBot.getDistanceEastLeft();
+		south = (int) texBot.getDistanceSouthLeft();
+		//RConsole.println("North:\t"+north+"\tWest:\t"+west+"\tEast:\t"+east+"\tSouth\t"+south);
+		currentCell.north = north<51?Cell.WallState.WALL:Cell.WallState.NONE;
+		currentCell.west = west<51?Cell.WallState.WALL:Cell.WallState.NONE;
+		currentCell.east = east<51?Cell.WallState.WALL:Cell.WallState.NONE;
+		currentCell.south = south<51?Cell.WallState.WALL:Cell.WallState.NONE;
+		
 	}
 	public static int degreesFromCM(double cm) {
 		return (int) Math.round(15.04*cm);
@@ -86,11 +98,18 @@ public class Maze {
 	public static void allignNorth() {
 		//RConsole.println("Alligned NORTH");
 		texBot.setAllPower(20);
-		while(texBot.binaryNorthLeft()||texBot.binaryNorthRight()) {
+		 do {
 			texBot.moveSouth();
-		}
+		} while(texBot.binaryNorthLeft()||texBot.binaryNorthRight());
+		Delay.msDelay(25);
 		texBot.stop();
+		long time = System.currentTimeMillis();
+		texBot.setAllPower(35);
 		while(!texBot.binaryNorthLeft()||!texBot.binaryNorthRight()) {
+			if(System.currentTimeMillis()>time+3000) {
+				allign();
+				break;
+			}
 			if(!texBot.binaryNorthLeft()) {
 				texBot.motorWest.backward();
 			} else {
@@ -103,83 +122,120 @@ public class Maze {
 			}
 		}
 		texBot.stop();
+		vertAllign = Directions.NORTH;
 	}
 	public static void allignWest() {
 		//RConsole.println("Alligned WEST");
 		texBot.setAllPower(20);
-		while(texBot.binaryWestLeft()||texBot.binaryWestRight()) {
+		do {
 			texBot.moveEast();
-		}
+		} while(texBot.binaryWestLeft()||texBot.binaryWestRight());
+		Delay.msDelay(25);
 		texBot.stop();
+		long time = System.currentTimeMillis();
+		texBot.setAllPower(35);
 		while(!texBot.binaryWestLeft()||!texBot.binaryWestRight()) {
+			if(System.currentTimeMillis()>time+3000) {
+				allign();
+				break;
+			}
 			if(!texBot.binaryWestRight()) {
 				texBot.motorNorth.forward();
+				//texBot.motorEast.forward();
 			} else {
 				texBot.motorNorth.stop();
 			}
 			if(!texBot.binaryWestLeft()) {
 				texBot.motorSouth.backward();
+				//texBot.motorEast.backward();
 			} else {
 				texBot.motorSouth.stop();
 			}
 		}
 		texBot.stop();
+		horizAllign = Directions.WEST;
 	}
 	public static void allignSouth() {
 		//RConsole.println("Alligned SOUTH");
 		texBot.setAllPower(20);
-		while(texBot.binarySouthLeft()||texBot.binarySouthRight()) {
+		do{
 			texBot.moveNorth();
-		}
-		texBot.stop();
+		}while(texBot.binarySouthLeft()||texBot.binarySouthRight());
+		Delay.msDelay(25);
+		texBot.stop();		
+		long time = System.currentTimeMillis();
+		texBot.setAllPower(35);
 		while(!texBot.binarySouthLeft()||!texBot.binarySouthRight()) {
+			if(System.currentTimeMillis()>time+3000) {
+				allign();
+				break;
+			}
 			if(!texBot.binarySouthLeft()) {
 				texBot.motorEast.backward();
+				//texBot.motorNorth.backward();
 			} else {
 				texBot.motorEast.stop();
 			}
 			if(!texBot.binarySouthRight()) {
 				texBot.motorWest.forward();
+				//texBot.motorNorth.forward();
 			} else {
 				texBot.motorWest.stop();
 			}
 		}
 		texBot.stop();
+		vertAllign = Directions.SOUTH;
 	}
 	public static void allignEast() {
 		//RConsole.println("Alligned EAST");
 		texBot.setAllPower(20);
-		while(texBot.binaryEastLeft()||texBot.binaryEastRight()) {
+		do {
 			texBot.moveWest();
-		}
+		} while (texBot.binaryEastLeft()||texBot.binaryEastRight());
+		Delay.msDelay(25);
 		texBot.stop();
+		long time = System.currentTimeMillis();
+		texBot.setAllPower(35);
 		while(!texBot.binaryEastLeft()||!texBot.binaryEastRight()) {
+			if(System.currentTimeMillis()>time+3000) {
+				allign();
+				break;
+			}
 			if(!texBot.binaryEastLeft()) {
 				texBot.motorNorth.backward();
+				//texBot.motorWest.backward();
 			} else {
 				texBot.motorNorth.stop();
 			}
 			if(!texBot.binaryEastRight()) {
 				texBot.motorSouth.forward();
+				//texBot.motorWest.forward();
 			} else {
 				texBot.motorSouth.stop();
 			}
 		}
 		texBot.stop();
+		horizAllign = Directions.EAST;
 	}
 	public static void move(Directions dir) {
 		texBot.setAllPower(40);
 		texBot.stop();
+		int travel = 1085;
 		switch(dir) {
 		case NORTH:
+			if(vertAllign==Directions.SOUTH) {
+				travel+=offset;
+			} else if (vertAllign==Directions.NORTH) {
+				travel-=offset;
+			}
 			texBot.motorWest.resetTachoCount();
 			texBot.motorEast.resetTachoCount();
 			texBot.moveNorth();
-			while (texBot.motorEast.getTachoCount()<1070 && texBot.motorWest.getTachoCount()>-1070) {
-				if(texBot.motorEast.getTachoCount()>1070) {
+			while (texBot.motorEast.getTachoCount()<travel && texBot.motorWest.getTachoCount()>-travel) {
+				if(texBot.motorEast.getTachoCount()>travel) {
 					texBot.motorEast.stop();
 				} 
-				if(texBot.motorWest.getTachoCount()<-1070) {
+				if(texBot.motorWest.getTachoCount()<-travel) {
 					texBot.motorWest.stop();
 				}
 			}
@@ -189,14 +245,19 @@ public class Maze {
 			currDirection = Directions.NORTH;
 			break;
 		case WEST:
+			if(horizAllign==Directions.WEST) {
+				travel-=offset;
+			} else if (horizAllign==Directions.EAST) {
+				travel+=offset;
+			}
 			texBot.motorNorth.resetTachoCount();
 			texBot.motorSouth.resetTachoCount();			
 			texBot.moveWest();
-			while (texBot.motorNorth.getTachoCount()<1070 && texBot.motorSouth.getTachoCount()>-1070) {
-				if(texBot.motorNorth.getTachoCount()>1070) {
+			while (texBot.motorNorth.getTachoCount()<travel && texBot.motorSouth.getTachoCount()>-travel) {
+				if(texBot.motorNorth.getTachoCount()>travel) {
 					texBot.motorNorth.stop();
 				} 
-				if(texBot.motorSouth.getTachoCount()<-1070) {
+				if(texBot.motorSouth.getTachoCount()<-travel) {
 					texBot.motorSouth.stop();
 				}
 			}			texBot.stop();
@@ -204,15 +265,20 @@ public class Maze {
 			cells.addElement(currentCell);
 			currDirection = Directions.WEST;
 			break;
-		case SOUTH:
+		case SOUTH:			
+			if(vertAllign==Directions.SOUTH) {
+				travel-=offset;
+			} else if (vertAllign==Directions.NORTH) {
+				travel+=offset;
+			}
 			texBot.motorWest.resetTachoCount();
 			texBot.motorEast.resetTachoCount();
 			texBot.moveSouth();
-			while (texBot.motorEast.getTachoCount()>-1070 && texBot.motorWest.getTachoCount()<1070) {
-				if(texBot.motorEast.getTachoCount()<-1070) {
+			while (texBot.motorEast.getTachoCount()>-travel && texBot.motorWest.getTachoCount()<travel) {
+				if(texBot.motorEast.getTachoCount()<-travel) {
 					texBot.motorEast.stop();
 				} 
-				if(texBot.motorWest.getTachoCount()>1070) {
+				if(texBot.motorWest.getTachoCount()>travel) {
 					texBot.motorWest.stop();
 				}
 			}
@@ -222,14 +288,19 @@ public class Maze {
 			currDirection = Directions.SOUTH;
 			break;
 		case EAST:
+			if(horizAllign==Directions.WEST) {
+				travel+=offset;
+			} else if (horizAllign==Directions.EAST) {
+				travel-=offset;
+			}
 			texBot.motorSouth.resetTachoCount();
 			texBot.motorNorth.resetTachoCount();
 			texBot.moveEast();
-			while (texBot.motorNorth.getTachoCount()>-1070 && texBot.motorSouth.getTachoCount()<1070) {
-				if(texBot.motorNorth.getTachoCount()<-1070) {
+			while (texBot.motorNorth.getTachoCount()>-travel && texBot.motorSouth.getTachoCount()<travel) {
+				if(texBot.motorNorth.getTachoCount()<-travel) {
 					texBot.motorNorth.stop();
 				} 
-				if(texBot.motorSouth.getTachoCount()>1070) {
+				if(texBot.motorSouth.getTachoCount()>travel) {
 					texBot.motorSouth.stop();
 				}
 			}
